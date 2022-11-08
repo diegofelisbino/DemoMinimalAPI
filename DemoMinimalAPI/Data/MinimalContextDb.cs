@@ -27,5 +27,7 @@ namespace DemoMinimalAPI.Data
 
             base.OnModelCreating(modelBuilder);
         }
+
+       
     }
 }

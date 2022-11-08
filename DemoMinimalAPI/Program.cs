@@ -1,5 +1,6 @@
 using DemoMinimalAPI.Data;
 using DemoMinimalAPI.Models;
+using EntityGraphQL.AspNet;
 using Microsoft.EntityFrameworkCore;
 using MiniValidation;
 
@@ -13,6 +14,16 @@ builder.Services.AddDbContext<MinimalContextDb>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+//graphql
+/*builder.Services
+    .AddGraphQLServer()    
+    .AddQueryType<Query>();*/
+
+builder.Services
+    .AddGraphQLSchema<MinimalContextDb>()
+    .AddGraphQLServer()
+    .AddQueryType();
+
 
 var app = builder.Build();
 
@@ -24,6 +35,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+//graphql
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGraphQL<MinimalContextDb>();
+});
+
+
+
 
 app.MapGet("/fornecedor", async (MinimalContextDb context) =>
 {
@@ -99,3 +120,4 @@ app.MapDelete("/fornecedor{id}", async (Guid id,MinimalContextDb context) =>
     .WithTags("Fornecedor");
 
 app.Run();
+
